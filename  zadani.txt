@@ -1,0 +1,142 @@
+# Implementace oboustrane zretezeneho spojoveho seznamu
+# -----------------------------------------------------
+#
+# +-------+      +-------+                 +-------+
+# |       |----->|       |----->     ----->|       |
+# | data1 |      | data2 |       ...       | dataN |
+# |       |<-----|       |<-----     <-----|       |
+# +-------+      +-------+                 +-------+
+#
+# * oboustrane zretezeny seznam jako trida C++
+# * nacteni osobnich dat z tohoto souboru dle nize uvedene struktury
+#   + konstruktor - inicializace
+#   + destruktor - uvolneni alokovanych zdroju
+#   + nacteni dat ze souboru
+#   + vypis obsahu seznamu
+#   + delka spojoveho seznamu
+#   + metoda pro pridani / odebrani ze zacatku spojoveho seznamu
+#   + metoda pro pridani / odebrani z konce spojoveho seznamu
+#   + metoda pro pridani / odebrani z pozice ve spojovem seznamu
+#   + odstraneni vsech prvku ze seznamu
+#   + vypsani nejstarsi osoby
+#   + vypsani zadaneho poctu nejvyssich osob, vypis serazen dle vysky
+# * vsechny vypisy je mozne zobrazit jak v konzoli, tak ulozit do souboru
+# * rozdeleni zdrojoveho kodu do vice souboru
+#
+# Dostatecne informace k implementaci by snad meli byt v ukazkach, ktere jsem
+# vytvarel behem semestru http://kmlinux.fjfi.cvut.cz/~vokacpet/zpro/, ale
+# existuje rada dalsi zdroju, kde lze ziskat informace o zakladech programovani
+# v C++ (napr. https://www.learncpp.com/, http://www.cplusplus.com/doc/tutorial/, ...).
+#
+#
+# struktura datoveho souboru:
+# * id .......... identifikacni cislo osoby
+# * givenName ... jmeno
+# * sn .......... prijmeni
+# * birthday .... datum narozeni YYYY-m-d
+# * height ...... vyska
+# * weight ...... vaha
+# * mother_id ... identifikacni cislo matky (-1 = nedefinovane)
+# * father_id ... identifikacni cislo otce (-1 = nedefinovane)
+#
+# birthday;mother_id;givenName;height;id;father_id;weight;sn
+2000-9-27;25677;Michal;173;67627;26992;68.5;Spick
+1993-11-10;98671;Michal;168;54788;76973;60.8;Spergl
+1996-11-24;-1;Katerina;173;60097;-1;62.5;Zachovalova
+1946-9-20;-1;Petr;188;55638;-1;78.0;Durcik
+2000-9-10;-1;Andrea;187;43455;-1;71.7;Sulikova
+1945-6-10;-1;Petr;193;98582;-1;80.3;Cechura
+2000-8-13;59843;Jan;183;94915;-1;79.1;Hanus
+2006-12-23;39879;Klara;160;63942;33588;64.0;Reichlova
+1993-9-15;39091;Jaroslav;182;15551;98308;65.4;Vedral
+2004-12-5;39879;Viktoria;149;18188;33588;41.3;Reichlova
+1966-8-22;-1;Julie;162;98671;-1;64.7;Sperglova
+1964-6-23;-1;Lucie;151;65647;-1;46.3;Cirusova
+1982-8-20;90819;Lenka;188;52745;72816;85.7;Kremlikova
+1993-11-7;-1;Frantisek;177;16618;-1;52.1;Cabalka
+1988-4-27;39091;Roman;172;78876;98308;51.8;Vedral
+1973-6-16;18230;Olga;170;59843;29351;65.4;Hanusova
+2018-7-6;52642;Jiri;71;65452;46642;8.7;Svoboda
+1933-10-8;-1;Jana;171;89736;-1;84.3;Kasparaova
+2016-5-23;21946;Veronika;90;44263;45158;11.0;Drsova
+2014-7-9;36211;Lubomir;109;82758;15850;24.2;Nefedyev
+2000-2-21;19454;Katerina;173;12849;86431;58.0;Cabalkaova
+1958-11-24;73851;Jakub;179;58506;26427;63.9;Nefedyev
+1999-1-18;59843;Katerina;166;20701;-1;77.7;Hanusova
+1970-7-4;-1;Kristyna;190;25677;-1;65.9;Spickova
+1921-10-23;-1;Lucie;189;59466;-1;70.7;Konradova
+1988-8-19;39091;Robert;181;59306;98308;74.6;Vedral
+1952-7-25;-1;Ivona;187;23558;-1;76.2;Kaceraova
+1958-4-25;-1;Antonin;179;19770;-1;81.5;Jakoubek
+1998-1-1;-1;Katerina;178;13122;-1;72.8;Durcikova
+2019-1-25;52642;Jan;66;73084;46642;6.9;Svoboda
+1967-2-17;-1;Marek;170;89508;-1;75.9;Sulik
+1980-6-19;-1;Tomas;172;33588;-1;52.7;Reichl
+1991-9-4;-1;Dina;174;65791;-1;65.1;Vedralova
+1992-4-5;-1;Petr;183;19235;-1;75.1;Andrle
+1969-1-15;25610;Martin;170;67823;76340;55.7;Zelenka
+2014-10-19;36211;Olga;115;82219;15850;18.9;Nefedyevova
+2011-10-16;31268;Edita;111;35940;26289;19.5;Sarfova
+1994-2-3;58734;Jiri;170;49030;-1;51.7;Durcik
+1994-7-13;58734;Adela;161;61793;-1;51.0;Zibrtova
+1994-7-28;54648;Hana;183;52642;89508;58.0;Svobodaova
+1996-5-28;-1;Ivan;176;16929;-1;67.1;Trebensky
+1995-8-1;-1;Marek;167;94686;-1;63.5;Zibrt
+1995-10-1;54648;Jan;185;98448;89508;75.3;Sulik
+2014-10-10;44786;Renata;108;90896;84290;21.1;Havelkaova
+1971-5-20;22980;Hana;165;83115;55638;51.2;Krejciova
+1922-4-28;-1;Petr;183;11112;-1;69.3;Konrad
+1990-5-16;39091;Jozef;185;89344;98308;81.6;Vedral
+2016-5-11;65791;Zora;105;46470;59306;15.8;Vedralova
+1996-5-3;13543;Stepanka;164;79789;48745;60.0;Markvartova
+1994-5-5;-1;Petra;180;26578;-1;64.6;Cirusova
+1993-5-17;-1;Adam;171;46642;-1;51.2;Svoboda
+1943-11-6;-1;Olga;177;69176;-1;61.4;Zeleznyova
+1953-7-28;-1;Filip;179;39251;-1;63.6;Veneck
+1967-7-23;-1;Daniel;195;69537;-1;70.7;Krejci
+2014-8-28;30331;Jakub;91;81717;19235;14.9;Andrle
+1934-3-7;-1;Jiri;180;26427;-1;60.7;Nefedyev
+1952-3-23;-1;Michal;157;65831;-1;52.6;Cabalka
+2005-2-1;52745;Libor;156;35184;95200;44.1;Kremlik
+1938-11-7;-1;Radek;171;67483;-1;66.9;Cirus
+1990-5-13;-1;Jurij;164;84290;-1;57.5;Havelka
+1986-7-27;-1;Martin;180;26289;-1;55.7;Sarf
+1968-2-5;69176;Klara;166;39091;85780;57.8;Vedralova
+2012-4-17;31268;Jan;100;96624;26289;16.7;Sarf
+1969-3-14;-1;Zdenek;178;76973;-1;63.9;Spergl
+1998-5-16;54648;Jan;171;73034;89508;80.9;Sulik
+1960-4-27;73851;Tomas;179;95234;26427;56.2;Nefedyev
+2017-7-9;60097;Jana;78;54205;65885;10.7;Zachovalova
+1996-3-22;98671;Sona;177;82721;76973;62.4;Sassakova
+1987-10-20;65647;Petr;151;57269;70686;51.4;Cirus
+1994-1-26;98671;Zuzana;153;21946;76973;39.0;Drsova
+2013-8-12;81768;Karolina;86;54929;-1;11.8;Culkaova
+1948-6-15;-1;Martin;184;14473;-1;89.2;Kolman
+1972-3-7;22980;Adriana;161;86888;55638;44.9;Zachovalova
+1996-7-5;-1;Iva;191;48036;-1;74.7;Sulikova
+1982-5-27;90819;Lukas;176;28979;72816;79.2;Hlava
+1960-9-2;-1;Lenka;183;94886;-1;76.7;Nefedyevova
+1974-2-17;45966;Pavel;163;64716;65831;55.5;Cabalka
+1943-5-10;-1;Jan;176;76340;-1;73.2;Zelenka
+1942-5-27;-1;Lukas;176;85780;-1;81.2;Zelezny
+1979-8-16;-1;Tomas;157;95200;-1;55.5;Kremlik
+2012-2-9;81768;Linda;111;82803;-1;15.9;Culkaova
+1970-7-6;25610;Daniel;170;48745;76340;64.9;Zelenka
+1967-8-16;32786;Tadeas;169;73396;90418;58.3;Konrad
+1986-2-25;94886;Sabina;160;31268;95234;57.2;Sarfova
+1962-4-25;-1;Bara;165;61070;-1;53.3;Nefedyevova
+2013-6-28;-1;Ivana;98;35646;-1;18.7;Kozlovskyova
+1940-12-19;-1;Michal;181;12166;-1;68.9;Skaroupka
+1975-8-16;45966;Vladimir;173;86431;65831;68.6;Cabalka
+1947-6-6;59466;Vojtech;171;90418;11112;62.9;Konrad
+1963-5-18;-1;Adela;171;28225;-1;58.8;Jakoubekova
+1999-9-5;13543;Jarmila;172;78240;48745;71.1;Trebenskyova
+1964-8-3;-1;Tomas;169;98308;-1;48.7;Vedral
+1961-5-21;89736;Pavlina;170;90819;-1;49.6;Hlavaova
+1992-7-19;-1;Dagmar;186;30331;-1;84.9;Andrleova
+1992-10-18;58734;Adela;160;44786;-1;57.9;Havelkaova
+1996-4-7;86888;Robin;183;65885;74750;63.5;Zachoval
+2011-11-17;31268;Monika;123;75018;26289;23.5;Sarfova
+1972-5-4;-1;Tereza;170;13543;-1;51.7;Zelenkaova
+1970-3-28;-1;Martin;187;74750;-1;78.1;Zachoval
+1938-11-16;-1;Anna;190;73851;-1;80.3;Nefedyevova
